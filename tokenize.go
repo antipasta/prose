@@ -41,23 +41,11 @@ func doSplit(token string) []*Token {
 			break
 		}
 		last = utf8.RuneCountInString(token)
-		lower := strings.ToLower(token)
+
 		if hasAnyPrefix(token, prefixes) {
 			// Remove prefixes -- e.g., $100 -> [$, 100].
 			tokens = addToken(string(token[0]), tokens)
 			token = token[1:]
-		} else if idx := hasAnyIndex(lower, []string{"'ll", "'s", "'re", "'m"}); idx > -1 {
-			// Handle "they'll", "I'll", etc.
-			//
-			// they'll -> [they, 'll].
-			tokens = addToken(token[:idx], tokens)
-			token = token[idx:]
-		} else if idx := hasAnyIndex(lower, []string{"n't"}); idx > -1 {
-			// Handle "Don't", "won't", etc.
-			//
-			// don't -> [do, n't].
-			tokens = addToken(token[:idx], tokens)
-			token = token[idx:]
 		} else if hasAnySuffix(token, suffixes) {
 			// Remove suffixes -- e.g., Well) -> [Well, )].
 			suffs = append([]*Token{
